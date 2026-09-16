@@ -69,10 +69,10 @@ def add_memory_to_chain(rag_chain, session_id: str, enabled: bool = True, recent
         # Save to summary memory
         summary_memory.save_context({"input": user_input}, {"output": ai_output})
 
-        # Save to recent short-term memory
+        # Save to recent memory
         update_recent_memory(session_id, user_input, ai_output, n=recent_n)
 
-        # Refresh summary
+        # Refresh all summary
         messages = summary_memory.chat_memory.messages
         existing_summary = summary_memory.load_memory_variables({}).get("summary", "")
         new_summary = summary_memory.predict_new_summary(messages, existing_summary)

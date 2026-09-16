@@ -68,7 +68,7 @@ def build_or_update_vectorstores(
                 if docs:
                     vectorstore.add_documents(docs)
                 else:
-                    print("⚪ No new documents provided — loaded existing index only.")
+                    print("loaded existing index only as no new documents provided.")
             else:
                 if not docs:
                     raise ValueError("❌ No documents provided and FAISS index not found.")
@@ -80,75 +80,5 @@ def build_or_update_vectorstores(
             return vectorstore
 
         else:
-            print("Store_type not supported ❌")
-
-    #Cloud vector db
-    elif store_type == "pinecone":
-        print("☁️ Using Pinecone vector store...")
-
-        # --- Load API credentials ---
-        api_key = os.getenv("PINECONE_API_KEY")
-        environment = os.getenv("PINECONE_ENV") or store_config.get("cloud", {}).get("environment", "us-east-1")
-        if not api_key:
-            raise ValueError("❌ Missing PINECONE_API_KEY in environment variables.")
-
-        pc = Pinecone(api_key=api_key)
-        index_name = f"{store_config.get('cloud', {}).get('index_name', 'rag-assistant-index')}-{provider}"
-        namespace = store_config.get("cloud", {}).get("namespace", "default")
-
-        # --- Detect embedding model dimension dynamically ---
-        print("🔍 Detecting embedding dimension...")
-        test_text = ["Hello world!"]
-        try:
-            sample_vec = embedding_model.embed_documents(test_text)[0]
-            embedding_dim = len(sample_vec)
-        except Exception:
-            embedding_dim = len(embedding_model.embed_query("Hello world!"))
-        print(f"📏 Embedding dimension detected: {embedding_dim}")
-
-        # --- List all existing indexes ---
-        existing_indexes = [i["name"] for i in pc.list_indexes()]
-
-        if index_name not in existing_indexes:
-            print(f"🆕 Creating Pinecone index '{index_name}' with dim={embedding_dim}")
-
-            if environment.endswith("-free") or environment.endswith("-starter"):
-                from pinecone import PodSpec
-                pc.create_index(
-                    name=index_name,
-                    dimension=embedding_dim,
-                    metric="cosine",
-                    spec=PodSpec(environment=environment)
-                )
-            else:
-                pc.create_index(
-                    name=index_name,
-                    dimension=embedding_dim,
-                    metric="cosine",
-                    spec=ServerlessSpec(cloud="aws", region=environment)
-                )
-            print(f"✅ Pinecone index '{index_name}' created.")
-
-        else:
-            # ✅ Verify dimension matches the existing index
-            desc = pc.describe_index(index_name)
-            server_dim = desc["dimension"]
-            if server_dim != embedding_dim:
-                raise ValueError(
-                    f"❌ Dimension mismatch: Embedding model = {embedding_dim}, "
-                    f"Pinecone index = {server_dim}. "
-                    f"Please use a different index name or matching embedding provider."
-                )
-            print(f"♻️ Using existing Pinecone index '{index_name}'.")
-
-        # ✅ Always connect and upsert documents — runs for both new AND existing index
-        vectorstore = LC_Pinecone.from_documents(
-            docs,
-            embedding=embedding_model,
-            index_name=index_name,
-            namespace=namespace,
-            pinecone_api_key=api_key
-        )
-
-        print(f"✅ Pinecone index '{index_name}' ready (namespace: {namespace}, dim={embedding_dim})")
-        return vectorstore
+            print("Store_type not supported")
+    

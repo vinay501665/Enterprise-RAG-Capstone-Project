@@ -151,6 +151,21 @@ On first startup, the app loads the files in `../policy_documents`, splits them 
 
 The current UI exposes an LLM provider selector with `openai` and `gemini`, but the implemented RAG chain currently supports only `openai`. Selecting Gemini will result in an unsupported-provider error until Gemini chat-model support is added to `utils/rag_chain.py`.
 
+## Sample Question and Answer
+
+**Input:**
+
+> What is MDM in VPT?
+
+**Output:**
+
+MDM in Verdant Peak Technologies (VPT) stands for Mobile Device Management. It is a platform that manages and secures employees' devices, including company-issued laptops and personal devices used for work (BYOD - Bring Your Own Device). The MDM system enforces security measures such as disk encryption, automatic security updates, and the capability to remotely wipe data from devices in case of loss or theft. Employees are required to enroll their personal devices in the MDM's BYOD profile, which ensures compliance with security policies, including a minimum passcode requirement and the ability to selectively wipe company data.
+
+**References**
+
+- 04_it_policies.pdf
+- 07_code_of_conduct.pdf
+
 ## Document Ingestion
 
 Supported inputs in `utils/loader.py`:

@@ -8,7 +8,7 @@ def build_rag_chain(retriever, config):
     provider = config.get("llm_provider", "openai").lower()
     temperature = config.get("llm_temperature", 0.3)
 
-    print(f"🔹 Building RAG chain using provider: {provider}")
+    print(f"Building RAG chain using provider: {provider}")
 
     if provider == "openai":
         llm = ChatOpenAI(
