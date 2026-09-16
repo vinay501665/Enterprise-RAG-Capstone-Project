@@ -1,5 +1,6 @@
 from langchain_classic.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_classic.schema.runnable import RunnableLambda, RunnableParallel
 from utils.memory import get_memory_summary, get_recent_context
 
@@ -14,6 +15,12 @@ def build_rag_chain(retriever, config):
             model=config.get("openai_model", "gpt-4o-mini"),
             temperature=temperature,
             streaming=True  # future-proof for streaming
+        )
+    elif provider == "gemini":
+        llm = ChatGoogleGenerativeAI(
+            model=config.get("gemini_model", "gemini-2.5-flash"),
+            temperature=temperature,
+            streaming=True  # same reason as above
         )
     else:
         raise ValueError(f"Unsupported LLM provider: {provider}")

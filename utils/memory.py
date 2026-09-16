@@ -8,6 +8,14 @@ SESSION_MESSAGE_HISTORY = {}
 SESSION_SUMMARY_MEMORY = {}
 SESSION_RECENT_MEMORY = {}
 
+
+def clear_session_memory(session_id: str):
+    """Remove all in-memory conversation state for a session."""
+    SESSION_MESSAGE_HISTORY.pop(session_id, None)
+    SESSION_SUMMARY_MEMORY.pop(session_id, None)
+    SESSION_RECENT_MEMORY.pop(session_id, None)
+
+
 def get_session_message_history(session_id: str):
     if session_id not in SESSION_MESSAGE_HISTORY:
         SESSION_MESSAGE_HISTORY[session_id] = InMemoryChatMessageHistory()

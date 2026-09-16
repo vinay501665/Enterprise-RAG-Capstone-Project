@@ -13,7 +13,7 @@ from utils.splitter import split_documents
 from utils.embedder import build_or_update_vectorstores
 from utils.retriever import get_retriever
 from utils.rag_chain import build_rag_chain
-from utils.memory import add_memory_to_chain
+from utils.memory import add_memory_to_chain, clear_session_memory
 from utils.hybridSearchAndReRanker import create_hybrid_retriever
 
 # define page config
@@ -258,6 +258,11 @@ for sid, info in st.session_state.chat_sessions.items():
         break
 
 current_session = st.session_state.chat_sessions[st.session_state.active_session]
+
+if st.sidebar.button("🗑 Clear Chat"):
+    current_session["chat_history"] = []
+    clear_session_memory(st.session_state.active_session)
+    st.rerun()
 
 # show session ID for reference: optional
 st.sidebar.markdown(
