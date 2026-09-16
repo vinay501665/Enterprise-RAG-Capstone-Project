@@ -1,0 +1,37 @@
+{
+    "llm_provider": "openai",
+    "embedding_provider": "openai",
+
+    "vector_store": {
+        "type": "faiss",
+        "local": {
+            "faiss_path": "vectorstores/faiss_index"
+        },
+        "cloud": {
+            "provider": "faiss",
+            "index_name": "rag-assistant-index-openai", 
+            "namespace": "default",
+            "environment": "gcp-starter",
+            "dimension": 1536 
+        }
+    },
+
+    "retriever": {
+        "type": "base",
+        "top_k": 3
+    },
+    "prompt": {
+        "system_prompt": "You are a helpful and knowledgable assistant who answers questions using uploaded documents.",
+        "temperature": 1,
+        "max_tokens": 5000
+    },
+    "memory": {
+        "enables_default": true,
+        "max_memory_window":5        
+    },
+    "chunking": {
+        "chunk_size": 1000,
+        "chunk_overlap": 100
+    }
+    
+}
