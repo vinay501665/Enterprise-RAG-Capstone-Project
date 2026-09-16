@@ -302,13 +302,26 @@ for file in os.listdir(directory):
         ch.metadata['path'] = file_path
         ch.metadata['type'] = policy_type
     all_chunks.extend(chunk)
-    vectorstore = build_or_update_vectorstores(all_chunks, CONFIG)
+
+vectorstore_path = os.path.join(
+    project_root,
+    "vectorstores",
+    f"{CONFIG.get('embedding_provider', 'openai')}_faiss_index",
+)
+index_exists = os.path.exists(os.path.join(vectorstore_path, "index.faiss"))
+
+# Build the index once. Streamlit reruns this script for every interaction, so
+# re-adding the full document set here would duplicate vectors on every rerun.
+vectorstore = build_or_update_vectorstores(
+    [] if index_exists else all_chunks,
+    CONFIG,
+    persist_dir=vectorstore_path,
+)
 
 
 # build RAG chain for Active-Session
 
 try:
-    vectorstore = build_or_update_vectorstores([], CONFIG)
     retriever = get_retriever(vectorstore, CONFIG)
 
     hybrid_retriever = create_hybrid_retriever(retriever, all_chunks)
@@ -335,7 +348,7 @@ st.markdown(
     <section class="hero-card">
         <div class="eyebrow">Enterprise intelligence, made easy</div>
         <div class="hero-title">Ask. Discover. Decide.</div>
-        <p class="hero-copy">Search your policy library and get grounded answers with useful references.</p>
+        <p class="hero-copy">Search your policy library of Verdant Peak Technologies(VPT) and get grounded answers with useful references.</p>
     </section>
     """,
     unsafe_allow_html=True,
@@ -347,7 +360,7 @@ if not current_session["chat_history"]:
         <div class="empty-state">
             <div class="empty-icon">✦</div>
             <div class="empty-title">Your next answer is one question away</div>
-            <div class="empty-copy">Try asking about leave, benefits, security, or any policy in your library.</div>
+            <div class="empty-copy">Try asking about leave, benefits, security, or any policy in Verdant Peak Technologies(VPT).</div>
         </div>
         """,
         unsafe_allow_html=True,
